@@ -177,6 +177,12 @@ body:hover .cursor-circle {
   gap: 0.25rem;
 }
 
+@media (max-width: 768px) {
+  .nav-units {
+    display: none;
+  }
+}
+
 .nav-unit {
   padding: 0.5rem 0.75rem;
   border-radius: 0.5rem;
@@ -205,6 +211,26 @@ body:hover .cursor-circle {
   border: 1px solid var(--border);
   border-radius: 0.5rem;
   cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .hamburger {
+    display: flex !important;
+  }
+  
+  .mobile-menu {
+    display: block;
+  }
+  
+  .mobile-menu.hidden {
+    display: none;
+  }
+}
+
+@media (min-width: 769px) {
+  .hamburger {
+    display: none !important;
+  }
 }
 
 .hamburger span {

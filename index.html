@@ -25,10 +25,10 @@
     
     <!-- Unidad Tabs (escritorio) -->
     <div class="nav-units" id="nav-units">
-      <button class="nav-unit" onclick="location.href='unidad.html?u=1'" title="Unidad 1: Fundamentos">U1</button>
-      <button class="nav-unit" onclick="location.href='unidad.html?u=2'" title="Unidad 2: Modelo E-R">U2</button>
-      <button class="nav-unit" onclick="location.href='unidad.html?u=3'" title="Unidad 3: SQL">U3</button>
-      <button class="nav-unit" onclick="location.href='unidad.html?u=4'" title="Unidad 4: Admin">U4</button>
+      <button class="nav-unit" onclick="checkAuth()" title="Unidad 1: Fundamentos">U1</button>
+      <button class="nav-unit" onclick="checkAuth()" title="Unidad 2: Modelo E-R">U2</button>
+      <button class="nav-unit" onclick="checkAuth()" title="Unidad 3: SQL">U3</button>
+      <button class="nav-unit" onclick="checkAuth()" title="Unidad 4: Admin">U4</button>
     </div>
     
     <!-- Botón hamburguesa (móvil) -->
@@ -38,41 +38,41 @@
       <span></span>
     </button>
     
+    <!-- Menú móvil desplegable -->
+    <div class="mobile-menu hidden" id="mobile-menu">
+      <div class="mobile-units" id="mobile-units">
+        <button class="mobile-unit" onclick="loadUnitPage(1)">
+          <span class="unit-num">U1</span>
+          <span>Fundamentos</span>
+          <span class="unit-weeks">Semanas 1-4</span>
+        </button>
+        <button class="mobile-unit" onclick="loadUnitPage(2)">
+          <span class="unit-num">U2</span>
+          <span>Modelo E-R</span>
+          <span class="unit-weeks">Semanas 5-8</span>
+        </button>
+        <button class="mobile-unit" onclick="loadUnitPage(3)">
+          <span class="unit-num">U3</span>
+          <span>SQL</span>
+          <span class="unit-weeks">Semanas 9-12</span>
+        </button>
+        <button class="mobile-unit" onclick="loadUnitPage(4)">
+          <span class="unit-num">U4</span>
+          <span>Admin</span>
+          <span class="unit-weeks">Semanas 13-16</span>
+        </button>
+      </div>
+      <div class="mobile-auth" id="mobile-auth">
+        <a href="login.html" class="btn btn-outline btn-full">Login</a>
+        <a href="register.html" class="btn btn-primary btn-full">Registrarse</a>
+      </div>
+    </div>
+    
     <div class="nav-auth" id="nav-auth">
       <a href="login.html" class="btn btn-outline">Login</a>
       <a href="register.html" class="btn btn-primary">Registrarse</a>
     </div>
   </nav>
-  
-  <!-- Menú móvil desplegable -->
-  <div class="mobile-menu hidden" id="mobile-menu">
-    <div class="mobile-units">
-      <button class="mobile-unit" onclick="location.href='unidad.html?u=1'">
-        <span class="unit-num">U1</span>
-        <span>Fundamentos</span>
-        <span class="unit-weeks">Semanas 1-4</span>
-      </button>
-      <button class="mobile-unit" onclick="location.href='unidad.html?u=2'">
-        <span class="unit-num">U2</span>
-        <span>Modelo E-R</span>
-        <span class="unit-weeks">Semanas 5-8</span>
-      </button>
-      <button class="mobile-unit" onclick="location.href='unidad.html?u=3'">
-        <span class="unit-num">U3</span>
-        <span>SQL</span>
-        <span class="unit-weeks">Semanas 9-12</span>
-      </button>
-      <button class="mobile-unit" onclick="location.href='unidad.html?u=4'">
-        <span class="unit-num">U4</span>
-        <span>Admin</span>
-        <span class="unit-weeks">Semanas 13-16</span>
-      </button>
-    </div>
-    <div class="mobile-auth" id="mobile-auth">
-      <a href="login.html" class="btn btn-outline btn-full">Login</a>
-      <a href="register.html" class="btn btn-primary btn-full">Registrarse</a>
-    </div>
-  </div>
 
   <!-- Hero Section -->
   <section class="hero">
@@ -96,8 +96,8 @@
         Explora las unidades,visualiza los trabajos y domina los fundamentos.
       </p>
       
-      <div class="hero-buttons">
-        <a href="#unidades" class="btn btn-primary">Explorar Unidades</a>
+      <div class="hero-buttons" id="hero-buttons">
+        <a href="login.html" class="btn btn-primary">Iniciar Sesión</a>
         <a href="#footer" class="btn btn-outline">Ver más</a>
       </div>
     </div>
@@ -312,10 +312,10 @@
   <footer class="footer" id="footer">
     <p class="text-sm text-muted">© 2026 DB Portfolio - Base de Datos II</p>
     <div class="flex gap-6">
-      <a href="#" onclick="loadUnitPage(1)" class="text-xs text-muted hover:text-primary">U1</a>
-      <a href="#" onclick="loadUnitPage(2)" class="text-xs text-muted hover:text-primary">U2</a>
-      <a href="#" onclick="loadUnitPage(3)" class="text-xs text-muted hover:text-primary">U3</a>
-      <a href="#" onclick="loadUnitPage(4)" class="text-xs text-muted hover:text-primary">U4</a>
+<a href="#" onclick="checkAuth(); return false;" class="text-xs text-muted hover:text-primary">U1</a>
+        <a href="#" onclick="checkAuth(); return false;" class="text-xs text-muted hover:text-primary">U2</a>
+        <a href="#" onclick="checkAuth(); return false;" class="text-xs text-muted hover:text-primary">U3</a>
+        <a href="#" onclick="checkAuth(); return false;" class="text-xs text-muted hover:text-primary">U4</a>
     </div>
   </footer>
 
@@ -409,6 +409,15 @@
             <button onclick="logoutUser()" class="btn btn-primary btn-full">Cerrar Sesión</button>
           `;
         }
+        
+        // Hero buttons - con sesión
+        const heroButtons = document.getElementById('hero-buttons');
+        if (heroButtons) {
+          heroButtons.innerHTML = `
+            <a href="unidad.html?u=1" class="btn btn-primary">Explorar Unidades</a>
+            <a href="#footer" class="btn btn-outline">Ver más</a>
+          `;
+        }
       } else if (navAuth) {
         // Sin sesión
         navAuth.innerHTML = `
@@ -421,6 +430,15 @@
           mobileAuth.innerHTML = `
             <a href="login.html" class="btn btn-outline btn-full">Login</a>
             <a href="register.html" class="btn btn-primary btn-full">Registrarse</a>
+          `;
+        }
+        
+        // Hero buttons - sin sesión
+        const heroButtons = document.getElementById('hero-buttons');
+        if (heroButtons) {
+          heroButtons.innerHTML = `
+            <a href="login.html" class="btn btn-primary">Iniciar Sesión</a>
+            <a href="#footer" class="btn btn-outline">Ver más</a>
           `;
         }
       }
@@ -436,9 +454,26 @@
     }
 
     // Redirigir a unidad específica
-    function loadUnitPage(unidad) {
-      closeMobileMenu();
-      window.location.href = 'unidad.html?u=' + unidad;
+    async function loadUnitPage(unidad) {
+      const supabase = window.SB || window.supabase;
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        closeMobileMenu();
+        window.location.href = 'unidad.html?u=' + unidad;
+      } else {
+        window.location.href = 'login.html';
+      }
+    }
+    
+    // Verificar auth antes de acceder a unidades
+    async function checkAuth() {
+      const supabase = window.SB || window.supabase;
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        window.location.href = 'unidad.html?u=1';
+      } else {
+        window.location.href = 'login.html';
+      }
     }
 
     // Menú móvil
