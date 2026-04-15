@@ -30,7 +30,7 @@ const CURSO_CONFIG = {
 // ============================================
 
 window.initSupabase = function() {
-  if (typeof supabase !== 'undefined') {
+  if (typeof supabase !== 'undefined' && !window.SB) {
     window.SB = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
       auth: {
         persistSession: true,

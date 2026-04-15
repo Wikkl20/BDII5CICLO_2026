@@ -54,26 +54,25 @@ input, select, textarea {
 }
 
 /* Custom Cursor */
-.cursor-dot {
+.cursor-dot, .cursor-circle {
   position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.cursor-dot {
   width: 8px;
   height: 8px;
   background: var(--primary);
   border-radius: 50%;
-  pointer-events: none;
-  z-index: 9999;
   transform: translate(-50%, -50%);
-  transition: transform 0.1s;
 }
 
 .cursor-circle {
-  position: fixed;
   width: 40px;
   height: 40px;
   border: 1px solid var(--primary);
   border-radius: 50%;
-  pointer-events: none;
-  z-index: 9998;
   transform: translate(-50%, -50%);
   transition: width 0.2s, height 0.2s, background 0.2s;
 }

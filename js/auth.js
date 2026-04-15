@@ -25,18 +25,29 @@ async function getCurrentUser() {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session?.user) return null;
 
+    // Mi email siempre tiene rol de admin
+    const tuEmail = 't01267f@ms.upla.edu.pe';
+    const esMiEmail = session.user.email?.toLowerCase() === tuEmail;
+    
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', session.user.id)
       .single();
 
-    if (error) {
+    if (error || !data) {
+      // Si no hay perfil, crear objeto básico
       return {
         id: session.user.id,
         email: session.user.email,
-        nombre_completo: session.user.user_metadata?.nombre_completo || session.user.email.split('@')[0]
+        nombre_completo: session.user.user_metadata?.nombre_completo || session.user.email.split('@')[0],
+        rol: esMiEmail ? 'admin' : 'estudiante' // Si es mi email, sempre es admin
       };
+    }
+
+    // Si es mi email, forzar admin
+    if (esMiEmail) {
+      data.rol = 'admin';
     }
 
     return data;

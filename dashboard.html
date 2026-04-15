@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="css/styles.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗄️</text></svg>">
 </head>
-<body class="dark">
+<body class="dark" style="visibility:hidden">
   <div class="bg-noise"></div>
   <div class="cursor-dot" id="cursor-dot"></div>
   <div class="cursor-circle" id="cursor-circle"></div>
@@ -155,9 +155,49 @@
   <script src="js/auth.js"></script>
   <script src="js/app.js"></script>
   <script>
-    // Inicializar Supabase
-    if (window.initSupabase) window.initSupabase();
-    
+    // Verificar acceso ANTES de cargar cualquier cosa
+    (async function() {
+      // Inicializar Supabase
+      if (window.initSupabase) window.initSupabase();
+      
+      const supabase = window.SB || window.supabase;
+      if (!supabase) return;
+      
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      // Mi email siempre tiene acceso
+      const tuEmail = 't01267f@ms.upla.edu.pe';
+      const esTuEmail = session.user.email?.toLowerCase() === tuEmail;
+      
+      // Verificar rol
+      let esAdmin = false;
+      if (esTuEmail) {
+        esAdmin = true;
+      } else {
+        try {
+          const { data } = await supabase.from('profiles').select('rol').eq('id', session.user.id).single();
+          esAdmin = data?.rol === 'admin';
+        } catch (e) {
+          esAdmin = false;
+        }
+      }
+      
+      if (!esAdmin) {
+        // Redireccionar sin mostrar mensaje
+        window.location.replace('unidad.html?u=1');
+        return;
+      }
+      
+      // Si es admin, mostrar página
+      document.body.style.visibility = 'visible';
+    })();
+  </script>
+  <script>
     let currentUser = null;
     let selectedFile = null;
 
@@ -171,23 +211,10 @@
       cursorCircle.style.top = e.clientY + 'px';
     });
 
-    // Check auth con verificación de rol
+    // Check auth (ya verificado al inicio)
     document.addEventListener('DOMContentLoaded', async () => {
       await initAuth();
       currentUser = await getCurrentUser();
-      
-      // Verificar si hay sesión o si intenta acceder sin ser admin
-      if (!currentUser) {
-        window.location.href = 'login.html';
-        return;
-      }
-      
-      // Verificar rol - solo admin puede acceder al dashboard
-      if (currentUser.rol !== 'admin') {
-        alert('No tienes acceso al dashboard. Solo el administrador puede acceder.');
-        window.location.href = 'index.html';
-        return;
-      }
 
       // Update UI
       document.getElementById('user-name').textContent = currentUser.nombre_completo || 'Usuario';
@@ -381,24 +408,6 @@
       document.body.appendChild(div);
       setTimeout(() => div.remove(), 3000);
     }
-
-    const supabase = window.supabase.createClient(URL, KEY);
-
-async function verificarAdmin() {
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-        window.location.href = "index.html";
-        return;
-    }
-
-    if (user.email !== "T01267f@ms.upla.edu.pe") {
-        window.location.href = "index.html";
-        return;
-    }
-}
-
-verificarAdmin();
   </script>
 </body>
 </html>

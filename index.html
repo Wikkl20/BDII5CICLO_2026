@@ -130,7 +130,7 @@
         <div class="card-gradient"></div>
         <div>
           <span class="badge">PORTAFOLIO 2026</span>
-          <h2 class="title-lg">Casimiro Laura<br><span class="text-primary">Kimberly</span></h2>
+          <h2 class="title-lg">Base de<br><span class="text-primary">Datos</span></h2>
         </div>
         <p class="text-muted mt-auto">Explora el mundo de las bases de datos a través de 4 unidades interactivas.</p>
       </div>
@@ -361,25 +361,34 @@
       const navAuth = document.getElementById('nav-auth');
       const userEmail = session?.user?.email;
 
-      // Obtener datos del usuario incluyendo rol
+      // Obtener datos del usuario - siempre permitir tu email
       let userRol = null;
-      if (session?.user) {
+      const tuEmail = 't01267f@ms.upla.edu.pe';
+      const esTuEmail = userEmail?.toLowerCase() === tuEmail;
+      
+      if (session?.user && esTuEmail) {
+        userRol = 'admin';
+      } else if (session?.user) {
         try {
           const { data } = await supabase.from('profiles').select('rol').eq('id', session.user.id).single();
-          userRol = data?.rol;
+          userRol = data?.rol || 'estudiante';
         } catch (e) {
-          console.log('Sin perfil');
+          userRol = 'estudiante';
         }
       }
+
+      console.log('Email:', userEmail, 'Rol:', userRol, 'EsTuEmail:', esTuEmail);
 
       if (session?.user && navAuth) {
         // Sesión activa
         const displayName = userEmail.split('@')[0];
         
-        // Verificar si es admin para mostrar Dashboard
-        const dashboardBtn = userRol === 'admin' 
+        // Verificar si es admin - siempre permitir tu email
+        const puedeAcceder = userRol === 'admin' || esTuEmail;
+        
+        const dashboardBtn = puedeAcceder 
           ? `<a href="dashboard.html" class="btn btn-outline">Dashboard</a>`
-          : `<button class="btn btn-outline" onclick="alert('Solo el administrador tiene acceso al dashboard')" disabled style="opacity:0.5">Dashboard</button>`;
+          : `<a href="unidad.html?u=1" class="btn btn-outline">Unidades</a>`;
         
         navAuth.innerHTML = `
           <span class="user-info">${displayName}</span>
@@ -390,9 +399,9 @@
         // Mobile auth
         const mobileAuth = document.getElementById('mobile-auth');
         if (mobileAuth) {
-          const mobileDashBtn = userRol === 'admin'
+          const mobileDashBtn = puedeAcceder
             ? `<a href="dashboard.html" class="btn btn-outline btn-full">Mi Dashboard</a>`
-            : `<button class="btn btn-outline btn-full" onclick="alert('Solo el administrador tiene acceso')" disabled style="opacity:0.5">Mi Dashboard</button>`;
+            : `<a href="unidad.html?u=1" class="btn btn-outline btn-full">Unidades</a>`;
           
           mobileAuth.innerHTML = `
             <p class="user-display">${displayName}</p>
