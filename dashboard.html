@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Portfolio</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗄️</text></svg>">
+</head>
+<body class="dark">
+  <div class="bg-noise"></div>
+  <div class="cursor-dot" id="cursor-dot"></div>
+  <div class="cursor-circle" id="cursor-circle"></div>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  
+  <!-- Dashboard -->
+  <div class="dashboard">
+    <!-- Header -->
+    <div class="dashboard-header">
+      <div class="navbar-brand">
+        <div class="navbar-logo">DB</div>
+        <span class="navbar-title">Dashboard</span>
+      </div>
+      
+      <div class="dashboard-user">
+        <div class="dashboard-avatar" id="user-avatar">?</div>
+        <div class="dashboard-info">
+          <span class="dashboard-name" id="user-name">Cargando...</span>
+          <span class="dashboard-email" id="user-email">...</span>
+        </div>
+      </div>
+
+      <div class="flex gap-2">
+        <button class="theme-toggle" onclick="toggleTheme()" title="Cambiar tema">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+          </svg>
+        </button>
+        <button class="btn btn-outline" onclick="logout()">Cerrar Sesión</button>
+      </div>
+    </div>
+
+    <!-- Alert -->
+    <div id="dashboard-alert" class="alert hidden"></div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('mis-trabajos')">Mis Trabajos</button>
+      <button class="tab" onclick="switchTab('subir')">Subir Trabajo</button>
+      <button class="tab" onclick="switchTab('ver-todos')">Ver Portafolio</button>
+    </div>
+
+    <!-- Tab: Mis Trabajos -->
+    <div id="tab-mis-trabajos" class="dashboard-card">
+      <h2 class="dashboard-card-title">Mis Trabajos</h2>
+      <div class="jobs-list" id="my-jobs-list">
+        <div class="text-center text-muted">Cargando...</div>
+      </div>
+    </div>
+
+    <!-- Tab: Subir Trabajo -->
+    <div id="tab-subir" class="dashboard-card hidden">
+      <h2 class="dashboard-card-title">Subir Nuevo Trabajo</h2>
+      
+      <form id="upload-form" class="upload-form">
+        <div class="form-group">
+          <label class="form-label" for="titulo">Título</label>
+          <input type="text" id="titulo" class="form-input" placeholder="Nombre del trabajo" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="unidad">Unidad</label>
+          <select id="unidad" class="form-select" required>
+            <option value="">Seleccionar unidad</option>
+            <option value="1">Unidad 1 - Fundamentos (Semanas 1-4)</option>
+            <option value="2">Unidad 2 - Modelo E-R (Semanas 5-8)</option>
+            <option value="3">Unidad 3 - SQL (Semanas 9-12)</option>
+            <option value="4">Unidad 4 - Admin (Semanas 13-16)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="semana">Semana</label>
+          <select id="semana" class="form-select" required>
+            <option value="">Seleccionar semana</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Tipo de entrega</label>
+          <div class="flex gap-4">
+            <label class="flex items-center gap-2">
+              <input type="radio" name="tipo" value="archivo" checked>
+              <span>Archivo</span>
+            </label>
+            <label class="flex items-center gap-2">
+              <input type="radio" name="tipo" value="enlace">
+              <span>Enlace</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- File Upload -->
+        <div id="file-upload-section">
+          <div class="form-group">
+            <label class="form-label" for="archivo">Archivo</label>
+            <div class="upload-dropzone" onclick="document.getElementById('archivo').click()">
+              <input type="file" id="archivo" class="hidden" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar" onchange="handleFileSelect(this)">
+              <svg class="upload-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+              </svg>
+              <p class="upload-text">Haz clic para subir un archivo</p>
+              <p class="upload-subtext">PDF, Word, Excel, PowerPoint, ZIP (max 10MB)</p>
+            </div>
+            <div id="file-preview" class="hidden mt-4"></div>
+          </div>
+        </div>
+
+        <!-- Link Upload -->
+        <div id="link-upload-section" class="hidden">
+          <div class="form-group">
+            <label class="form-label" for="enlace">URL del enlace</label>
+            <input type="url" id="enlace" class="form-input" placeholder="https://...">
+          </div>
+        </div>
+
+        <div id="upload-error" class="alert alert-error hidden"></div>
+        <div id="upload-success" class="alert alert-success hidden"></div>
+
+        <button type="submit" class="btn btn-primary btn-full" id="upload-btn">
+          <span>Subir Trabajo</span>
+          <div class="spinner hidden"></div>
+        </button>
+      </form>
+    </div>
+
+    <!-- Tab: Ver Portafolio -->
+    <div id="tab-ver-todos" class="dashboard-card hidden">
+      <h2 class="dashboard-card-title">Todos los Trabajos</h2>
+      <div class="units-display" id="all-jobs-list">
+        <div class="text-center text-muted">Cargando...</div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p class="footer-text">© 2026 DB Portfolio - Base de Datos II</p>
+      <a href="index.html" class="btn btn-ghost">← Volver al inicio</a>
+    </footer>
+  </div>
+
+  <script crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // Inicializar Supabase
+    if (window.initSupabase) window.initSupabase();
+    
+    let currentUser = null;
+    let selectedFile = null;
+
+    // Custom cursor
+    const cursorDot = document.getElementById('cursor-dot');
+    const cursorCircle = document.getElementById('cursor-circle');
+    document.addEventListener('mousemove', (e) => {
+      cursorDot.style.left = e.clientX + 'px';
+      cursorDot.style.top = e.clientY + 'px';
+      cursorCircle.style.left = e.clientX + 'px';
+      cursorCircle.style.top = e.clientY + 'px';
+    });
+
+    // Check auth con verificación de rol
+    document.addEventListener('DOMContentLoaded', async () => {
+      await initAuth();
+      currentUser = await getCurrentUser();
+      
+      // Verificar si hay sesión o si intenta acceder sin ser admin
+      if (!currentUser) {
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      // Verificar rol - solo admin puede acceder al dashboard
+      if (currentUser.rol !== 'admin') {
+        alert('No tienes acceso al dashboard. Solo el administrador puede acceder.');
+        window.location.href = 'index.html';
+        return;
+      }
+
+      // Update UI
+      document.getElementById('user-name').textContent = currentUser.nombre_completo || 'Usuario';
+      document.getElementById('user-email').textContent = currentUser.email;
+      document.getElementById('user-avatar').textContent = (currentUser.nombre_completo || currentUser.email || 'U')[0].toUpperCase();
+
+      // Load jobs
+      loadMyJobs();
+      loadAllJobs();
+
+      // Verificar si hay una unidad seleccionada desde index
+      const selectedUnidad = sessionStorage.getItem('selectedUnidad');
+      if (selectedUnidad) {
+        sessionStorage.removeItem('selectedUnidad');
+        // Ir directamente a la pestaña de ver todos y mostrar esa unidad
+        switchTab('ver-todos');
+        // Aquí podrías cargar solo esa unidad si lo necesitas
+      }
+
+      // Week options
+      document.getElementById('unidad').addEventListener('change', updateWeekOptions);
+    });
+
+    function updateWeekOptions() {
+      const unidad = parseInt(document.getElementById('unidad').value);
+      const semanaSelect = document.getElementById('semana');
+      semanaSelect.innerHTML = '<option value="">Seleccionar semana</option>';
+
+      if (!unidad) return;
+
+      const ranges = { 1: [1,4], 2: [5,8], 3: [9,12], 4: [13,16] };
+      const [start, end] = ranges[unidad];
+
+      for (let i = start; i <= end; i++) {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = `Semana ${i}`;
+        semanaSelect.appendChild(option);
+      }
+    }
+
+    // Toggle file/link
+    document.querySelectorAll('input[name="tipo"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        document.getElementById('file-upload-section').classList.toggle('hidden', e.target.value !== 'archivo');
+        document.getElementById('link-upload-section').classList.toggle('hidden', e.target.value !== 'enlace');
+      });
+    });
+
+    function handleFileSelect(input) {
+      const file = input.files[0];
+      if (file) {
+        selectedFile = file;
+        const preview = document.getElementById('file-preview');
+        preview.innerHTML = `
+          <div class="flex items-center justify-between p-3" style="background: var(--secondary); border-radius: 0.5rem;">
+            <span class="text-sm">${file.name}</span>
+            <button type="button" onclick="selectedFile = null; this.parentElement.remove()" class="btn-icon btn-icon-danger">✕</button>
+          </div>
+        `;
+        preview.classList.remove('hidden');
+      }
+    }
+
+    // Upload form
+    document.getElementById('upload-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const titulo = document.getElementById('titulo').value;
+      const unidad = parseInt(document.getElementById('unidad').value);
+      const semana = parseInt(document.getElementById('semana').value);
+      const tipo = document.querySelector('input[name="tipo"]:checked').value;
+      const btn = document.getElementById('upload-btn');
+      const errorDiv = document.getElementById('upload-error');
+      const successDiv = document.getElementById('upload-success');
+
+      if (!currentUser) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      btn.classList.add('btn-loading');
+      btn.querySelector('span').classList.add('hidden');
+      btn.querySelector('.spinner').classList.remove('hidden');
+      errorDiv.classList.add('hidden');
+      successDiv.classList.add('hidden');
+
+      try {
+        let archivoUrl = null;
+        let archivoNombre = null;
+
+        if (tipo === 'archivo') {
+          if (!selectedFile) {
+            throw new Error('Selecciona un archivo');
+          }
+
+          const fileExt = selectedFile.name.split('.').pop();
+          const fileName = `trabajos/${currentUser.id}/${unidad}-${semana}-${Date.now()}.${fileExt}`;
+          
+          const { data, error } = await window.supabase.storage
+            .from('trabajos')
+            .upload(fileName, selectedFile);
+
+          if (error) throw error;
+
+          const { data: urlData } = window.supabase.storage
+            .from('trabajos')
+            .getPublicUrl(fileName);
+
+          archivoUrl = urlData.publicUrl;
+          archivoNombre = selectedFile.name;
+        } else {
+          archivoUrl = document.getElementById('enlace').value;
+        }
+
+        const { error: insertError } = await window.supabase.from('trabajos').insert({
+          user_id: currentUser.id,
+          titulo,
+          unidad,
+          semana,
+          tipo,
+          archivo_url: tipo === 'archivo' ? archivoUrl : null,
+          archivo_nombre: tipo === 'archivo' ? archivoNombre : null,
+          enlace_url: tipo === 'enlace' ? archivoUrl : null
+        });
+
+        if (insertError) throw insertError;
+
+        successDiv.textContent = '¡Trabajo subido exitosamente!';
+        successDiv.classList.remove('hidden');
+        
+        document.getElementById('upload-form').reset();
+        selectedFile = null;
+        document.getElementById('file-preview').classList.add('hidden');
+
+        loadMyJobs();
+        loadAllJobs();
+        switchTab('mis-trabajos');
+      } catch (err) {
+        errorDiv.textContent = err.message || 'Error al subir trabajo';
+        errorDiv.classList.remove('hidden');
+      } finally {
+        btn.classList.remove('btn-loading');
+        btn.querySelector('span').classList.remove('hidden');
+        btn.querySelector('.spinner').classList.add('hidden');
+      }
+    });
+
+    async function deleteJob(id) {
+      if (!confirm('¿Eliminar este trabajo?')) return;
+
+      try {
+        const { error } = await window.supabase.from('trabajos').delete().eq('id', id);
+        if (error) throw error;
+
+        showToast('Trabajo eliminado');
+        loadMyJobs();
+        loadAllJobs();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('[id^="tab-"]').forEach(t => t.classList.add('hidden'));
+      
+      const tabs = ['mis-trabajos', 'subir', 'ver-todos'];
+      document.querySelectorAll('.tab')[tabs.indexOf(tabId)].classList.add('active');
+      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+    }
+
+    function toggleTheme() {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    }
+
+    async function logout() {
+      await window.supabase.auth.signOut();
+      window.location.href = 'login.html';
+    }
+
+    function showToast(message, type = 'success') {
+      const div = document.createElement('div');
+      div.className = `alert ${type === 'error' ? 'alert-error' : 'alert-success'}`;
+      div.textContent = message;
+      div.style.position = 'fixed';
+      div.style.bottom = '1.5rem';
+      div.style.right = '1.5rem';
+      div.style.zIndex = '1000';
+      document.body.appendChild(div);
+      setTimeout(() => div.remove(), 3000);
+    }
+
+    const supabase = window.supabase.createClient(URL, KEY);
+
+async function verificarAdmin() {
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+        window.location.href = "index.html";
+        return;
+    }
+
+    if (user.email !== "T01267f@ms.upla.edu.pe") {
+        window.location.href = "index.html";
+        return;
+    }
+}
+
+verificarAdmin();
+  </script>
+</body>
+</html>

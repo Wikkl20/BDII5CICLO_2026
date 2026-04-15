@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unidad - Portfolio</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗄️</text></svg>">
+</head>
+<body class="dark">
+  <div class="bg-noise"></div>
+  <div class="cursor-dot" id="cursor-dot"></div>
+  <div class="cursor-circle" id="cursor-circle"></div>
+  <div class="blob blob-1"></div>
+  
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-brand" onclick="location.href='index.html'" style="cursor:pointer">
+      <div class="navbar-logo">DB</div>
+      <span class="navbar-title">Portfolio</span>
+    </div>
+    
+    <div class="nav-units">
+      <button class="nav-unit" id="unit-u1" onclick="location.href='unidad.html?u=1'">U1</button>
+      <button class="nav-unit" id="unit-u2" onclick="location.href='unidad.html?u=2'">U2</button>
+      <button class="nav-unit" id="unit-u3" onclick="location.href='unidad.html?u=3'">U3</button>
+      <button class="nav-unit" id="unit-u4" onclick="location.href='unidad.html?u=4'">U4</button>
+    </div>
+    
+    <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    
+    <div class="nav-auth" id="nav-auth"></div>
+  </nav>
+  
+  <!-- Menú móvil -->
+  <div class="mobile-menu hidden" id="mobile-menu">
+    <div class="mobile-units">
+      <button class="mobile-unit" onclick="location.href='unidad.html?u=1'">
+        <span class="unit-num">U1</span><span>Semanas 1-4</span>
+      </button>
+      <button class="mobile-unit" onclick="location.href='unidad.html?u=2'">
+        <span class="unit-num">U2</span><span>Semanas 5-8</span>
+      </button>
+      <button class="mobile-unit" onclick="location.href='unidad.html?u=3'">
+        <span class="unit-num">U3</span><span>Semanas 9-12</span>
+      </button>
+      <button class="mobile-unit" onclick="location.href='unidad.html?u=4'">
+        <span class="unit-num">U4</span><span>Semanas 13-16</span>
+      </button>
+    </div>
+    <div class="mobile-auth" id="mobile-auth"></div>
+  </div>
+
+  <!-- Contenido Principal -->
+  <main class="unit-page">
+    <!-- Header de Unidad -->
+    <section class="unit-header-section">
+      <div class="unit-badge" id="unit-badge">UNIDAD 1</div>
+      <h1 class="unit-title" id="unit-title">Semanas 1 - 4</h1>
+      <p class="unit-subtitle" id="unit-subtitle">Trabajos del curso</p>
+    </section>
+
+    <!-- Semanas Grid -->
+    <section class="weeks-section">
+      <h2 class="section-title">Semanas</h2>
+      <div class="weeks-grid" id="weeks-grid"></div>
+    </section>
+
+    <!-- Footer acciones -->
+    <section class="unit-actions">
+      <a href="index.html" class="btn btn-outline">← Volver</a>
+    </section>
+  </main>
+
+  <!-- Modal para ver trabajos -->
+  <div class="modal-overlay hidden" id="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title">Semana 1</h3>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p class="text-sm text-muted">© 2026 DB Portfolio - Base de Datos II</p>
+  </footer>
+
+  <script crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    if (window.initSupabase) window.initSupabase();
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    let currentUnidad = parseInt(urlParams.get('u')) || 1;
+    
+    const unitSemanas = {
+      1: [1,2,3,4],
+      2: [5,6,7,8],
+      3: [9,10,11,12],
+      4: [13,14,15,16]
+    };
+
+    function setupUnidad() {
+      const semanas = unitSemanas[currentUnidad];
+      document.getElementById('unit-badge').textContent = `UNIDAD ${currentUnidad}`;
+      document.getElementById('unit-title').textContent = `Semanas ${semanas[0]} - ${semanas[3]}`;
+      document.getElementById('unit-subtitle').textContent = 'Trabajos del curso';
+      
+      [1,2,3,4].forEach(u => {
+        const btn = document.getElementById(`unit-u${u}`);
+        if (btn) btn.classList.toggle('active', u === currentUnidad);
+      });
+    }
+
+    async function loadWeekJobs(semana) {
+      const supabase = window.SB || window.supabase;
+      const container = document.getElementById(`week-${semana}`);
+      
+      if (!supabase || !container) return;
+
+      const { data, error } = await supabase
+        .from('trabajos')
+        .select('*')
+        .eq('semana', semana)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        container.innerHTML = '<p class="error-msg">Error al cargar</p>';
+        return;
+      }
+
+      const count = data?.length || 0;
+      
+      if (count === 0) {
+        container.innerHTML = '<p class="empty-msg">Sin trabajos</p>';
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="week-summary">
+          <span class="week-count">${count} trabajo${count !== 1 ? 's' : ''}</span>
+          <button class="btn btn-sm btn-outline" onclick="openWeekModal(${semana})">Ver todos ↗</button>
+        </div>
+        ${data.slice(0, 2).map(job => `
+          <div class="job-card-mini" onclick="openWeekModal(${semana})">
+            <span class="job-card-title">${job.titulo || 'Sin título'}</span>
+          </div>
+        `).join('')}
+        ${count > 2 ? `<p class="more-msg">+${count - 2} más</p>` : ''}
+      `;
+    }
+
+    async function openWeekModal(semana) {
+      const supabase = window.SB || window.supabase;
+      const modal = document.getElementById('modal-overlay');
+      const modalTitle = document.getElementById('modal-title');
+      const modalBody = document.getElementById('modal-body');
+      
+      modalTitle.textContent = `Semana ${semana}`;
+      modalBody.innerHTML = '<p class="loading-msg">Cargando...</p>';
+      modal.classList.remove('hidden');
+      
+      if (!supabase) {
+        modalBody.innerHTML = '<p class="error-msg">Error de conexión</p>';
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('trabajos')
+        .select('*')
+        .eq('semana', semana)
+        .order('created_at', { ascending: false });
+
+      if (error || !data?.length) {
+        modalBody.innerHTML = '<p class="empty-msg">No hay trabajos subidos</p>';
+        return;
+      }
+
+      modalBody.innerHTML = data.map(job => `
+        <div class="job-card-full">
+          <div class="job-card-header">
+            <span class="job-card-title">${job.titulo || 'Sin título'}</span>
+            <span class="job-card-date">${formatDate(job.created_at)}</span>
+          </div>
+          <div class="job-card-meta">
+            <span>${job.tipo === 'archivo' ? '📄 Archivo' : '🔗 Enlace'}</span>
+            ${job.archivo_nombre ? `<span>${job.archivo_nombre}</span>` : ''}
+          </div>
+          <div class="job-card-actions">
+            <a href="${job.archivo_url || job.enlace_url || '#'}" target="_blank" class="btn btn-primary btn-sm">
+              Ver Archivo ↗
+            </a>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function closeModal(event) {
+      if (event && event.target !== event.currentTarget) return;
+      document.getElementById('modal-overlay').classList.add('hidden');
+    }
+
+    function generateWeeksGrid() {
+      const grid = document.getElementById('weeks-grid');
+      const semanas = unitSemanas[currentUnidad];
+      
+      grid.innerHTML = semanas.map(semana => `
+        <div class="week-card" onclick="openWeekModal(${semana})">
+          <div class="week-header">
+            <span class="week-num">Semana ${semana}</span>
+          </div>
+          <div class="week-content" id="week-${semana}">
+            <p class="loading-msg">Cargando...</p>
+          </div>
+        </div>
+      `).join('');
+
+      semanas.forEach(semana => loadWeekJobs(semana));
+    }
+
+    async function loadAuthState() {
+      const supabase = window.SB || window.supabase;
+      const navAuth = document.getElementById('nav-auth');
+      const mobileAuth = document.getElementById('mobile-auth');
+      
+      if (!supabase) return;
+
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session?.user) {
+        const displayName = session.user.email.split('@')[0];
+        
+        navAuth.innerHTML = `
+          <span class="user-info">${displayName}</span>
+          <a href="index.html" class="btn btn-outline">Inicio</a>
+          <button onclick="logoutUser()" class="btn btn-primary">Cerrar</button>
+        `;
+        
+        if (mobileAuth) {
+          mobileAuth.innerHTML = `
+            <p class="user-display">${displayName}</p>
+            <a href="index.html" class="btn btn-outline btn-full">Inicio</a>
+            <button onclick="logoutUser()" class="btn btn-primary btn-full">Cerrar Sesión</button>
+          `;
+        }
+      } else {
+        navAuth.innerHTML = `
+          <a href="login.html" class="btn btn-outline">Login</a>
+          <a href="register.html" class="btn btn-primary">Registrarse</a>
+        `;
+        
+        if (mobileAuth) {
+          mobileAuth.innerHTML = `
+            <a href="login.html" class="btn btn-outline btn-full">Login</a>
+            <a href="register.html" class="btn btn-primary btn-full">Registrarse</a>
+          `;
+        }
+      }
+    }
+
+    async function logoutUser() {
+      const supabase = window.SB || window.supabase;
+      if (supabase) await supabase.auth.signOut();
+      window.location.href = 'index.html';
+    }
+
+    function toggleMobileMenu() {
+      document.getElementById('mobile-menu').classList.toggle('hidden');
+      document.getElementById('hamburger').classList.toggle('active');
+    }
+
+    document.addEventListener('mousemove', (e) => {
+      const dot = document.getElementById('cursor-dot');
+      const circle = document.getElementById('cursor-circle');
+      if (dot && circle) {
+        dot.style.left = e.clientX + 'px';
+        dot.style.top = e.clientY + 'px';
+        circle.style.left = e.clientX + 'px';
+        circle.style.top = e.clientY + 'px';
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setupUnidad();
+      generateWeeksGrid();
+      loadAuthState();
+    });
+  </script>
+</body>
+</html>
