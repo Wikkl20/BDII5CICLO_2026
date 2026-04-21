@@ -5,7 +5,7 @@
   --foreground: #ededed;
   --card: #0a0a0a;
   --card-foreground: #ededed;
-  --primary: #22c55e;
+  --primary: #D4AF37;
   --primary-foreground: #050505;
   --secondary: #171717;
   --secondary-foreground: #ededed;
@@ -16,7 +16,7 @@
   --destructive: #ef4444;
   --border: #262626;
   --input: #262626;
-  --ring: #22c55e;
+  --ring: #D4AF37;
   --radius: 0.75rem;
 }
 
@@ -78,7 +78,7 @@ input, select, textarea {
 }
 
 body:hover .cursor-circle {
-  background: rgba(34, 197, 94, 0.1);
+  background: rgba(212, 175, 55, 0.1);
 }
 
 /* Background Noise */
@@ -548,9 +548,9 @@ body:hover .cursor-circle {
 }
 
 .btn-primary:hover {
-  background: #16a34a;
+  background: #a3a116;
   transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(34, 197, 94, 0.3);
+  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
 }
 
 .btn-outline {
@@ -726,13 +726,13 @@ body:hover .cursor-circle {
 
 .bento-card:hover {
   border-color: var(--primary);
-  box-shadow: 0 0 30px rgba(34, 197, 94, 0.1);
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.1);
 }
 
 .card-gradient {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), transparent);
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), transparent);
   opacity: 0;
   transition: opacity 0.3s;
 }
@@ -784,7 +784,7 @@ body:hover .cursor-circle {
   padding: 0.25rem 0.75rem;
   font-size: 0.75rem;
   font-family: 'JetBrains Mono', monospace;
-  background: rgba(34, 197, 94, 0.2);
+  background: rgba(212, 175, 55, 0.2);
   color: var(--primary);
   border-radius: 9999px;
   margin-bottom: 1rem;
@@ -824,7 +824,7 @@ body:hover .cursor-circle {
   width: 3rem;
   height: 3rem;
   border-radius: 0.75rem;
-  background: rgba(34, 197, 94, 0.1);
+  background: rgba(212, 175, 55, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -894,7 +894,7 @@ body:hover .cursor-circle {
 
 .dot.red { background: #ef4444; }
 .dot.yellow { background: #eab308; }
-.dot.green { background: #22c55e; }
+.dot.green { background: #D4AF37; }
 
 .code-header .text-xs {
   font-family: 'JetBrains Mono', monospace;
@@ -908,7 +908,7 @@ code .keyword { color: var(--primary); }
 code .text { color: var(--foreground); }
 code .table { color: #facc15; }
 code .string { color: #22d3ee; }
-code .boolean { color: #22c55e; }
+code .boolean { color: #D4AF37; }
 
 /* Stats */
 .stats-grid {
@@ -948,7 +948,7 @@ code .boolean { color: #22c55e; }
 }
 
 .card-gradient {
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), transparent);
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), transparent);
 }
 
 /* Arrow animation */
@@ -1026,7 +1026,7 @@ code .boolean { color: #22c55e; }
 .form-input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
 }
 
 .form-select {
@@ -1282,7 +1282,7 @@ code .boolean { color: #22c55e; }
 
 .upload-dropzone:hover {
   border-color: var(--primary);
-  background: rgba(34, 197, 94, 0.05);
+  background: rgba(212, 175, 55, 0.05);
 }
 
 .upload-icon {
@@ -1450,9 +1450,9 @@ code .boolean { color: #22c55e; }
 }
 
 .alert-success {
-  background: rgba(34, 197, 94, 0.1);
-  color: #22c55e;
-  border: 1px solid rgba(34, 197, 94, 0.3);
+  background: rgba(212, 175, 55, 0.1);
+  color: #D4AF37;
+  border: 1px solid rgba(212, 175, 55, 0.3);
 }
 
 .alert-error {
