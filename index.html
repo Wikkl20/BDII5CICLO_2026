@@ -3,81 +3,432 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Base de Datos II - Portfolio</title>
+  <title>Base de Datos II — Kimberly Casimiro Laura · UPLA</title>
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗄️</text></svg>">
+
+  <style>
+    /* ======================================================
+       ESTILOS NUEVOS — Sección personal + UPLA logo + Footer
+    ====================================================== */
+
+    /* --- UPLA LOGO WRAPPER: resuelve el problema del logo blanco --- */
+    .upla-logo-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+      border: 1px solid rgba(212,175,55,0.4);
+      box-shadow: 0 0 10px rgba(212,175,55,0.15);
+      flex-shrink: 0;
+      overflow: hidden;
+      padding: 3px;
+    }
+    .upla-logo-wrap img {
+      width: 100%; height: 100%;
+      object-fit: contain;
+      filter: brightness(10) saturate(0); /* hace el logo visible en blanco */
+    }
+    .upla-logo-wrap-lg {
+      width: 54px; height: 54px;
+      border-radius: 12px;
+      padding: 5px;
+    }
+    .upla-logo-wrap-bento {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 0.7rem;
+    }
+
+    /* --- NAVBAR mejorado --- */
+    .navbar-brand-group {
+      display: flex; align-items: center; gap: 0.65rem;
+    }
+    .navbar-brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+    .navbar-brand-title {
+      font-size: 0.95rem; font-weight: 700; color: var(--foreground);
+    }
+    .navbar-brand-sub {
+      font-size: 0.58rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--muted-foreground);
+      letter-spacing: 0.06em;
+      display: none;
+    }
+    @media (min-width: 640px) { .navbar-brand-sub { display: block; } }
+
+    /* --- SECCIÓN PERSONAL --- */
+    .personal-section {
+      background: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(212,175,55,0.06) 0%, transparent 70%),
+                  linear-gradient(180deg, #080808 0%, #050505 100%);
+      border-bottom: 1px solid rgba(212,175,55,0.15);
+      padding: 5rem 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .personal-section::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(212,175,55,0.4), transparent);
+    }
+    .personal-section::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(212,175,55,0.2), transparent);
+    }
+
+    /* Partículas decorativas */
+    .personal-deco {
+      position: absolute;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: rgba(212,175,55,0.12);
+      pointer-events: none;
+      user-select: none;
+    }
+    .personal-deco-1 { top: 2rem; right: 8%; }
+    .personal-deco-2 { bottom: 2rem; right: 18%; }
+    .personal-deco-3 { top: 40%; left: 2%; font-size: 0.55rem; }
+
+    .personal-inner {
+      max-width: 960px; margin: 0 auto;
+      display: flex; align-items: center;
+      gap: 3rem; flex-wrap: wrap;
+      position: relative; z-index: 1;
+    }
+
+    /* Foto con efecto premium */
+    .personal-photo-wrap { position: relative; flex-shrink: 0; }
+    .personal-photo {
+      width: 140px; height: 140px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(212,175,55,0.6);
+      box-shadow: 0 0 0 6px rgba(212,175,55,0.08),
+                  0 0 40px rgba(212,175,55,0.2);
+      display: block; position: relative; z-index: 1;
+    }
+    .personal-photo-ring {
+      position: absolute; inset: -9px; border-radius: 50%;
+      border: 1px dashed rgba(212,175,55,0.3);
+      animation: spin-slow 20s linear infinite;
+    }
+    .personal-photo-ring2 {
+      position: absolute; inset: -16px; border-radius: 50%;
+      border: 1px dotted rgba(212,175,55,0.12);
+      animation: spin-slow 35s linear infinite reverse;
+    }
+    @keyframes spin-slow { to { transform: rotate(360deg); } }
+
+    /* Texto personal */
+    .personal-info { flex: 1; min-width: 280px; }
+
+    .personal-badges {
+      display: flex; align-items: center; gap: 0.5rem;
+      flex-wrap: wrap; margin-bottom: 0.9rem;
+    }
+    .personal-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: rgba(212,175,55,0.08);
+      border: 1px solid rgba(212,175,55,0.25);
+      border-radius: 99px;
+      padding: 0.22rem 0.7rem;
+      font-size: 0.68rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--primary);
+      letter-spacing: 0.04em;
+    }
+    .personal-badge-upla {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      background: rgba(212,175,55,0.05);
+      border: 1px solid rgba(212,175,55,0.2);
+      border-radius: 99px;
+      padding: 0.22rem 0.7rem 0.22rem 0.4rem;
+      font-size: 0.68rem;
+      color: rgba(212,175,55,0.8);
+      font-weight: 600;
+    }
+    .personal-badge-upla .upla-micro {
+      width: 18px; height: 18px; border-radius: 4px;
+      background: rgba(255,255,255,0.05);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; padding: 2px;
+    }
+    .personal-badge-upla .upla-micro img {
+      width: 100%; height: 100%; object-fit: contain;
+      filter: brightness(10) saturate(0);
+    }
+
+    .personal-name {
+      font-size: clamp(1.8rem, 4.5vw, 2.8rem);
+      font-weight: 800; line-height: 1.1;
+      color: var(--foreground); margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+    .personal-name span { color: var(--primary); }
+
+    .personal-univ {
+      font-size: 0.78rem;
+      color: rgba(212,175,55,0.65);
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .personal-meta {
+      display: flex; flex-wrap: wrap;
+      gap: 0.5rem 1.4rem; margin-bottom: 1.2rem;
+    }
+    .personal-meta-item {
+      font-size: 0.77rem;
+      color: var(--muted-foreground);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .personal-meta-item strong { color: var(--foreground); }
+
+    .personal-desc {
+      font-size: 0.93rem;
+      color: var(--muted-foreground);
+      line-height: 1.7; max-width: 540px;
+    }
+    .personal-desc strong { color: var(--primary); font-weight: 600; }
+
+    .personal-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.4rem; }
+
+    /* --- FOOTER PREMIUM --- */
+    .footer-premium {
+      background: linear-gradient(180deg, #080808 0%, #030303 100%);
+      border-top: 1px solid rgba(212,175,55,0.15);
+      padding: 3.5rem 2rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .footer-premium::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.5) 30%, rgba(212,175,55,0.8) 50%, rgba(212,175,55,0.5) 70%, transparent 100%);
+    }
+    .footer-glow {
+      position: absolute; bottom: -40px; left: 50%;
+      transform: translateX(-50%);
+      width: 400px; height: 80px;
+      background: radial-gradient(ellipse, rgba(212,175,55,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .footer-grid {
+      max-width: 960px; margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 2.5rem;
+      margin-bottom: 2.5rem;
+    }
+    @media (max-width: 700px) {
+      .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+    }
+
+    .footer-col-title {
+      font-size: 0.65rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--primary);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    /* Columna 1: Identidad */
+    .footer-identity { display: flex; flex-direction: column; gap: 0.6rem; }
+    .footer-logo-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.3rem; }
+    .footer-name { font-size: 1rem; font-weight: 700; color: var(--foreground); }
+    .footer-univ { font-size: 0.72rem; color: var(--muted-foreground); line-height: 1.4; }
+    .footer-univ strong { color: rgba(212,175,55,0.8); }
+
+    /* Columna 2: Navegación */
+    .footer-nav { display: flex; flex-direction: column; gap: 0.55rem; }
+    .footer-nav-link {
+      display: flex; align-items: center; gap: 0.6rem;
+      font-size: 0.82rem; color: var(--muted-foreground);
+      transition: color 0.2s; cursor: pointer;
+      text-decoration: none;
+    }
+    .footer-nav-link:hover { color: var(--primary); }
+    .footer-nav-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--primary);
+      opacity: 0.7;
+      width: 20px;
+    }
+
+    /* Columna 3: Contacto + Curso */
+    .footer-contact { display: flex; flex-direction: column; gap: 0.6rem; }
+    .footer-contact-item {
+      display: flex; align-items: flex-start; gap: 0.5rem;
+      font-size: 0.78rem; color: var(--muted-foreground);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .footer-contact-item strong { color: var(--foreground); }
+    .footer-tag {
+      display: inline-block;
+      background: rgba(212,175,55,0.08);
+      border: 1px solid rgba(212,175,55,0.2);
+      border-radius: 4px;
+      padding: 0.15rem 0.4rem;
+      font-size: 0.65rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--primary);
+      margin-top: 0.8rem;
+    }
+
+    /* Footer bottom bar */
+    .footer-bottom {
+      max-width: 960px; margin: 0 auto;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center;
+      justify-content: space-between; flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .footer-bottom-text {
+      font-size: 0.72rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--muted-foreground);
+    }
+    .footer-bottom-text span { color: var(--primary); }
+    .footer-dots { display: flex; gap: 0.5rem; }
+    .footer-dot-item {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(212,175,55,0.3);
+    }
+    .footer-dot-item.active { background: var(--primary); }
+
+    /* Responsive personal */
+    @media (max-width: 620px) {
+      .personal-inner { flex-direction: column; text-align: center; }
+      .personal-meta { justify-content: center; }
+      .personal-badges { justify-content: center; }
+      .personal-actions { justify-content: center; }
+      .personal-desc { margin: 0 auto; }
+    }
+  </style>
 </head>
 <body class="dark">
   <div class="bg-noise"></div>
   <div class="cursor-dot" id="cursor-dot"></div>
   <div class="cursor-circle" id="cursor-circle"></div>
-  
-  <!-- Animated Blobs -->
   <div class="blob blob-1"></div>
   <div class="blob blob-2"></div>
   
-  <!-- Navbar -->
+  <!-- ========== NAVBAR ========== -->
   <nav class="navbar">
-    <div class="navbar-brand" onclick="location.href='index.html'" style="cursor:pointer">
-      <div class="navbar-logo">DB</div>
-      <span class="navbar-title">Portfolio</span>
+    <div class="navbar-brand navbar-brand-group" onclick="location.href='index.html'" style="cursor:pointer">
+      <div class="upla-logo-wrap">
+        <img src="logo_upla.png" alt="UPLA">
+      </div>
+      <div class="navbar-brand-text">
+        <span class="navbar-brand-title">BD · Portfolio</span>
+        <span class="navbar-brand-sub">UPLA · V Ciclo 2026</span>
+      </div>
     </div>
     
-    <!-- Unidad Tabs (escritorio) -->
     <div class="nav-units" id="nav-units">
-      <button class="nav-unit" onclick="checkAuth()" title="Unidad 1: Fundamentos">U1</button>
-      <button class="nav-unit" onclick="checkAuth()" title="Unidad 2: Modelo E-R">U2</button>
-      <button class="nav-unit" onclick="checkAuth()" title="Unidad 3: SQL">U3</button>
-      <button class="nav-unit" onclick="checkAuth()" title="Unidad 4: Admin">U4</button>
+      <button class="nav-unit" onclick="location.href='unidad.html?u=1'" title="Unidad 1: Fundamentos">U1</button>
+      <button class="nav-unit" onclick="location.href='unidad.html?u=2'" title="Unidad 2: Modelo E-R">U2</button>
+      <button class="nav-unit" onclick="location.href='unidad.html?u=3'" title="Unidad 3: SQL">U3</button>
+      <button class="nav-unit" onclick="location.href='unidad.html?u=4'" title="Unidad 4: Admin">U4</button>
     </div>
     
-    <!-- Botón hamburguesa (móvil) -->
     <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()">
-      <span></span>
-      <span></span>
-      <span></span>
+      <span></span><span></span><span></span>
     </button>
     
-    <!-- Menú móvil desplegable -->
     <div class="mobile-menu hidden" id="mobile-menu">
       <div class="mobile-units" id="mobile-units">
-        <button class="mobile-unit" onclick="loadUnitPage(1)">
-          <span class="unit-num">U1</span>
-          <span>Fundamentos</span>
-          <span class="unit-weeks">Semanas 1-4</span>
+        <button class="mobile-unit" onclick="location.href='unidad.html?u=1'; closeMobileMenu();">
+          <span class="unit-num">U1</span><span>Fundamentos</span><span class="unit-weeks">Semanas 1-4</span>
         </button>
-        <button class="mobile-unit" onclick="loadUnitPage(2)">
-          <span class="unit-num">U2</span>
-          <span>Modelo E-R</span>
-          <span class="unit-weeks">Semanas 5-8</span>
+        <button class="mobile-unit" onclick="location.href='unidad.html?u=2'; closeMobileMenu();">
+          <span class="unit-num">U2</span><span>Modelo E-R</span><span class="unit-weeks">Semanas 5-8</span>
         </button>
-        <button class="mobile-unit" onclick="loadUnitPage(3)">
-          <span class="unit-num">U3</span>
-          <span>SQL</span>
-          <span class="unit-weeks">Semanas 9-12</span>
+        <button class="mobile-unit" onclick="location.href='unidad.html?u=3'; closeMobileMenu();">
+          <span class="unit-num">U3</span><span>SQL</span><span class="unit-weeks">Semanas 9-12</span>
         </button>
-        <button class="mobile-unit" onclick="loadUnitPage(4)">
-          <span class="unit-num">U4</span>
-          <span>Admin</span>
-          <span class="unit-weeks">Semanas 13-16</span>
+        <button class="mobile-unit" onclick="location.href='unidad.html?u=4'; closeMobileMenu();">
+          <span class="unit-num">U4</span><span>Admin</span><span class="unit-weeks">Semanas 13-16</span>
         </button>
       </div>
       <div class="mobile-auth" id="mobile-auth">
-        <a href="login.html" class="btn btn-outline btn-full">Login</a>
-        <a href="register.html" class="btn btn-primary btn-full">Registrarse</a>
+        <a href="login.html" class="btn btn-outline btn-full">Login Admin</a>
       </div>
     </div>
     
     <div class="nav-auth" id="nav-auth">
       <a href="login.html" class="btn btn-outline">Login</a>
-      <a href="register.html" class="btn btn-primary">Registrarse</a>
     </div>
   </nav>
 
-  <!-- Hero Section -->
+  <!-- ========== SECCIÓN PERSONAL ========== -->
+  <section class="personal-section">
+    <!-- Texto decorativo de fondo -->
+    <div class="personal-deco personal-deco-1"></div>
+    <div class="personal-deco personal-deco-2">Hola mundo </div>
+    <div class="personal-deco personal-deco-3"></div>
+
+    <div class="personal-inner">
+      <!-- Foto -->
+      <div class="personal-photo-wrap">
+        <div class="personal-photo-ring2"></div>
+        <div class="personal-photo-ring"></div>
+        <img src="foto_personal.png" alt="Kimberly Casimiro Laura" class="personal-photo">
+      </div>
+
+      <!-- Info -->
+      <div class="personal-info">
+        <div class="personal-badges">
+          <span class="personal-badge">● V Ciclo · 2026</span>
+          <span class="personal-badge-upla">
+            <span class="upla-micro"><img src="logo_upla.png" alt=""></span>
+            Universidad Peruana Los Andes
+          </span>
+        </div>
+
+        <h1 class="personal-name">
+          Kimberly<br><span>Casimiro Laura</span>
+        </h1>
+
+        <p class="personal-univ">Ing. de Sistemas y Computación · UPLA</p>
+
+        <div class="personal-meta">
+          <span class="personal-meta-item">📧 <strong>t01267f@ms.upla.edu.pe</strong></span>
+          <span class="personal-meta-item">🎓 Cód: <strong>t01267f</strong></span>
+          <span class="personal-meta-item">📘 Asignatura: <strong>Base de Datos II</strong></span>
+        </div>
+
+        <p class="personal-desc">
+          Bienvenido a mi <strong>Bitácora Académica</strong> del curso de
+          <strong>Base de Datos II</strong>, dirigido por el Ing. Bejarano.
+          Aquí documento mi progreso semanal: trabajos, actividades y recursos
+          desarrollados a lo largo del semestre. Navega libremente por las unidades.
+        </p>
+
+        <div class="personal-actions">
+          <a href="unidad.html?u=1" class="btn btn-primary">Explorar Unidades →</a>
+          <a href="#portafolio-section" class="btn btn-outline">Ver Portafolio</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== HERO ========== -->
   <section class="hero">
     <div class="hero-grid"></div>
-    
     <div class="hero-content">
       <div class="hero-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -86,82 +437,70 @@
           <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
         </svg>
       </div>
-      
-      <h1 class="hero-title">
-        Base de<br><span>Datos</span>
-      </h1>
-      
+      <h1 class="hero-title">Base de<br><span>Datos</span></h1>
       <p class="hero-subtitle">
-        Portafolio interactivo del curso Base de Datos II. 
-        Explora las unidades,visualiza los trabajos y domina los fundamentos.
+        Portafolio interactivo del curso Base de Datos II.
+        Explora las unidades, visualiza los trabajos y domina los fundamentos.
       </p>
-      
-      <div class="hero-buttons" id="hero-buttons">
-        <a href="login.html" class="btn btn-primary">Iniciar Sesión</a>
+      <div class="hero-buttons">
+        <a href="unidad.html?u=1" class="btn btn-primary">Explorar Unidades</a>
         <a href="#footer" class="btn btn-outline">Ver más</a>
       </div>
     </div>
-    
     <div class="scroll-indicator">
-      <div class="scroll-mouse">
-        <div class="scroll-dot"></div>
-      </div>
+      <div class="scroll-mouse"><div class="scroll-dot"></div></div>
     </div>
   </section>
 
-  <!-- Bento Grid -->
-  <div class="container">
+  <!-- ========== BENTO GRID ========== -->
+  <div class="container" id="portafolio-section">
     <div class="bento-card mb-4">
       <div class="course-banner">
-        <span>📚</span>
+        <span></span>
         <span class="course-name">Base de Datos II</span>
-        <span>•</span>
-        <span>V Ciclo 2026</span>
-        <span>•</span>
-        <span>Ing. Bejarano</span>
-        <span>•</span>
-        <span>Casimiro, Laura, Kimberly</span>
+        <span>•</span><span>V Ciclo 2026</span>
+        <span>•</span><span>Ing. Bejarano</span>
+        <span>•</span><span>Universidad Peruana Los Andes</span>
+        <span>•</span><span>Kimberly Casimiro Laura</span>
       </div>
     </div>
 
     <div class="bento-grid">
-      <!-- Hero Title Large -->
+      <!-- Card Portafolio con UPLA logo visible -->
       <div class="bento-card card-tilt" style="grid-column: span 4; grid-row: span 3;">
         <div class="card-gradient"></div>
         <div>
+          <div class="upla-logo-wrap upla-logo-wrap-bento">
+            <img src="logo_upla.png" alt="UPLA">
+          </div>
           <span class="badge">PORTAFOLIO 2026</span>
           <h2 class="title-lg">Base de<br><span class="text-primary">Datos</span></h2>
         </div>
         <p class="text-muted mt-auto">Explora el mundo de las bases de datos a través de 4 unidades interactivas.</p>
       </div>
 
-      <!-- Stats Card -->
       <div class="bento-card card-primary" style="grid-column: span 2; grid-row: span 2;">
         <span class="text-sm">Unidades</span>
         <span class="text-6xl">04</span>
       </div>
 
-      <!-- Rotating Keywords -->
       <div class="bento-card" style="grid-column: span 3; grid-row: span 2;">
         <span class="text-xs text-mono">// COMANDOS</span>
         <div class="text-2xl text-primary text-mono" id="keyword-rotator">SELECT *</div>
       </div>
 
-      <!-- Login CTA (dynamic) -->
-      <div class="bento-card card-dark" id="login-cta" style="grid-column: span 2; cursor: pointer;" onclick="checkAuth()">
+      <div class="bento-card card-dark" style="grid-column: span 2; cursor: pointer;" onclick="location.href='login.html'">
         <div class="flex justify-between items-center">
-          <span class="font-medium" id="cta-text">Iniciar Sesión</span>
+          <span class="font-medium">Área Admin</span>
           <span class="arrow-anim">→</span>
         </div>
       </div>
 
-      <!-- Unit 1 -->
-      <div class="bento-card card-tilt unit-card" style="grid-column: span 3; grid-row: span 2;" onclick="loadUnitPage(1)">
+      <!-- Unidad 1 -->
+      <div class="bento-card card-tilt unit-card" style="grid-column: span 3; grid-row: span 2;" onclick="location.href='unidad.html?u=1'">
         <span class="unit-number">1</span>
         <div class="unit-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M12 3L20 7.5V16.5L12 21L4 16.5V7.5L12 3Z"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3L20 7.5V16.5L12 21L4 16.5V7.5L12 3Z"/></svg>
         </div>
         <div class="unit-content">
           <span class="text-xs text-mono">UNIDAD 01</span>
@@ -170,15 +509,11 @@
         </div>
       </div>
 
-      <!-- Unit 2 -->
-      <div class="bento-card card-tilt unit-card" style="grid-column: span 3; grid-row: span 2;" onclick="loadUnitPage(2)">
+      <!-- Unidad 2 -->
+      <div class="bento-card card-tilt unit-card" style="grid-column: span 3; grid-row: span 2;" onclick="location.href='unidad.html?u=2'">
         <span class="unit-number">2</span>
         <div class="unit-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <rect x="3" y="3" width="7" height="7" rx="1"/>
-            <rect x="14" y="3" width="7" height="7" rx="1"/>
-            <rect x="8" y="14" width="7" height="7" rx="1"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="8" y="14" width="7" height="7" rx="1"/></svg>
         </div>
         <div class="unit-content">
           <span class="text-xs text-mono">UNIDAD 02</span>
@@ -187,15 +522,11 @@
         </div>
       </div>
 
-      <!-- Unit 3 -->
-      <div class="bento-card card-tilt unit-card" style="grid-column: span 3; grid-row: span 2;" onclick="loadUnitPage(3)">
+      <!-- Unidad 3 -->
+      <div class="bento-card card-tilt unit-card" style="grid-column: span 3; grid-row: span 2;" onclick="location.href='unidad.html?u=3'">
         <span class="unit-number">3</span>
         <div class="unit-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M8 9L11 12L8 15"/>
-            <path d="M14 15H17"/>
-            <rect x="3" y="4" width="18" height="16" rx="2"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 9L11 12L8 15"/><path d="M14 15H17"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg>
         </div>
         <div class="unit-content">
           <span class="text-xs text-mono">UNIDAD 03</span>
@@ -204,15 +535,11 @@
         </div>
       </div>
 
-      <!-- Unit 4 -->
-      <div class="bento-card card-tilt unit-card" style="grid-column: span 3; grid-row: span 2;" onclick="loadUnitPage(4)">
+      <!-- Unidad 4 -->
+      <div class="bento-card card-tilt unit-card" style="grid-column: span 3; grid-row: span 2;" onclick="location.href='unidad.html?u=4'">
         <span class="unit-number">4</span>
         <div class="unit-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M12 2L3 7V12C3 16.97 6.84 21.56 12 23C17.16 21.56 21 16.97 21 12V7L12 2Z"/>
-            <path d="M12 8V12"/>
-            <circle cx="12" cy="16" r="1" fill="currentColor"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L3 7V12C3 16.97 6.84 21.56 12 23C17.16 21.56 21 16.97 21 12V7L12 2Z"/><path d="M12 8V12"/><circle cx="12" cy="16" r="1" fill="currentColor"/></svg>
         </div>
         <div class="unit-content">
           <span class="text-xs text-mono">UNIDAD 04</span>
@@ -235,15 +562,15 @@
             <span class="marquee-item"><span class="dot"></span>ALTER</span>
             <span class="marquee-item"><span class="dot"></span>INDEX</span>
             <span class="marquee-item"><span class="dot"></span>TRIGGER</span>
+            <span class="marquee-item"><span class="dot"></span>PROCEDURE</span>
+            <span class="marquee-item"><span class="dot"></span>FUNCTION</span>
+            <span class="marquee-item"><span class="dot"></span>VIEW</span>
             <span class="marquee-item"><span class="dot"></span>SELECT</span>
             <span class="marquee-item"><span class="dot"></span>INSERT</span>
             <span class="marquee-item"><span class="dot"></span>UPDATE</span>
             <span class="marquee-item"><span class="dot"></span>DELETE</span>
             <span class="marquee-item"><span class="dot"></span>JOIN</span>
             <span class="marquee-item"><span class="dot"></span>WHERE</span>
-            <span class="marquee-item"><span class="dot"></span>CREATE</span>
-            <span class="marquee-item"><span class="dot"></span>ALTER</span>
-            <span class="marquee-item"><span class="dot"></span>INDEX</span>
             <span class="marquee-item"><span class="dot"></span>TRIGGER</span>
           </div>
         </div>
@@ -252,15 +579,14 @@
       <!-- Code Preview -->
       <div class="bento-card card-dark" style="grid-column: span 5; grid-row: span 2;">
         <div class="code-header">
-          <div class="dot red"></div>
-          <div class="dot yellow"></div>
-          <div class="dot green"></div>
-          <span class="text-xs text-muted ml-2">query.sql</span>
+          <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+          <span class="text-xs text-muted ml-2">bitacora_query.sql</span>
         </div>
         <code class="text-sm">
-          <span class="keyword">SELECT</span> <span class="text">*</span><br>
-          <span class="keyword">FROM</span> <span class="table">estudiantes</span><br>
-          <span class="keyword">WHERE</span> <span class="string">activo</span> = <span class="boolean">true</span>;
+          <span class="keyword">SELECT</span> nombre, semana, titulo<br>
+          <span class="keyword">FROM</span> <span class="table">trabajos</span><br>
+          <span class="keyword">WHERE</span> <span class="string">user_id</span> = <span class="boolean">'t01267f'</span><br>
+          <span class="keyword">ORDER BY</span> semana <span class="keyword">ASC</span>;
         </code>
       </div>
 
@@ -269,31 +595,16 @@
         <span class="text-xs text-mono uppercase">Progreso del curso</span>
         <div class="stats-grid mt-4">
           <div class="stat-item">
-            <div class="stat-header">
-              <span class="text-xs text-muted">Teoría</span>
-              <span class="text-xs">100%</span>
-            </div>
-            <div class="stat-bar">
-              <div class="stat-fill" style="width: 100%;"></div>
-            </div>
+            <div class="stat-header"><span class="text-xs text-muted">Teoría</span><span class="text-xs">100%</span></div>
+            <div class="stat-bar"><div class="stat-fill" style="width:100%"></div></div>
           </div>
           <div class="stat-item">
-            <div class="stat-header">
-              <span class="text-xs text-muted">Práctica</span>
-              <span class="text-xs">75%</span>
-            </div>
-            <div class="stat-bar">
-              <div class="stat-fill" style="width: 75%;"></div>
-            </div>
+            <div class="stat-header"><span class="text-xs text-muted">Práctica</span><span class="text-xs">75%</span></div>
+            <div class="stat-bar"><div class="stat-fill" style="width:75%"></div></div>
           </div>
           <div class="stat-item">
-            <div class="stat-header">
-              <span class="text-xs text-muted">Proyectos</span>
-              <span class="text-xs">50%</span>
-            </div>
-            <div class="stat-bar">
-              <div class="stat-fill" style="width: 50%;"></div>
-            </div>
+            <div class="stat-header"><span class="text-xs text-muted">Proyectos</span><span class="text-xs">50%</span></div>
+            <div class="stat-bar"><div class="stat-fill" style="width:50%"></div></div>
           </div>
         </div>
       </div>
@@ -302,20 +613,106 @@
       <div class="bento-card card-gradient" style="grid-column: span 3; grid-row: span 2;">
         <div class="text-center">
           <span class="text-4xl font-bold text-primary">SQL</span>
-          <p class="text-xs text-muted mt-1">Structured Query</p>
+          <p class="text-xs text-muted mt-1">Structured Query Language</p>
+          <p class="text-xs text-mono mt-2" style="color:rgba(212,175,55,0.4);">V Ciclo · UPLA</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Footer -->
-  <footer class="footer" id="footer">
-    <p class="text-sm text-muted">© 2026 DB Portfolio - Base de Datos II</p>
-    <div class="flex gap-6">
-<a href="#" onclick="checkAuth(); return false;" class="text-xs text-muted hover:text-primary">U1</a>
-        <a href="#" onclick="checkAuth(); return false;" class="text-xs text-muted hover:text-primary">U2</a>
-        <a href="#" onclick="checkAuth(); return false;" class="text-xs text-muted hover:text-primary">U3</a>
-        <a href="#" onclick="checkAuth(); return false;" class="text-xs text-muted hover:text-primary">U4</a>
+  <!-- ========== FOOTER PREMIUM ========== -->
+  <footer class="footer-premium" id="footer">
+    <div class="footer-glow"></div>
+
+    <div class="footer-grid">
+
+      <!-- Columna 1: Identidad -->
+      <div class="footer-identity">
+        <p class="footer-col-title">// Estudiante</p>
+        <div class="footer-logo-row">
+          <div class="upla-logo-wrap upla-logo-wrap-lg">
+            <img src="logo_upla.png" alt="UPLA">
+          </div>
+          <div>
+            <p class="footer-name">Kimberly Casimiro Laura</p>
+            <p class="footer-univ" style="font-size:0.68rem; color:rgba(212,175,55,0.7);">t01267f</p>
+          </div>
+        </div>
+        <p class="footer-univ">
+          <strong>Universidad Peruana Los Andes</strong><br>
+          Ingeniería de Sistemas y Computación
+        </p>
+        <div>
+          <span class="footer-tag">BD II · V Ciclo · 2026</span>
+        </div>
+      </div>
+
+      <!-- Columna 2: Unidades -->
+      <div>
+        <p class="footer-col-title">// Unidades</p>
+        <div class="footer-nav">
+          <a href="unidad.html?u=1" class="footer-nav-link">
+            <span class="footer-nav-num">U1</span> Fundamentos — Sem. 1-4
+          </a>
+          <a href="unidad.html?u=2" class="footer-nav-link">
+            <span class="footer-nav-num">U2</span> Modelo E-R — Sem. 5-8
+          </a>
+          <a href="unidad.html?u=3" class="footer-nav-link">
+            <span class="footer-nav-num">U3</span> SQL — Sem. 9-12
+          </a>
+          <a href="unidad.html?u=4" class="footer-nav-link">
+            <span class="footer-nav-num">U4</span> Admin — Sem. 13-16
+          </a>
+        </div>
+      </div>
+
+      <!-- Columna 3: Contacto y Curso -->
+      <div>
+        <p class="footer-col-title">// Contacto & Curso</p>
+        <div class="footer-contact">
+          <div class="footer-contact-item">
+            <span>📧</span>
+            <span><strong>t01267f@ms.upla.edu.pe</strong></span>
+          </div>
+          <div class="footer-contact-item">
+            <span>📘</span>
+            <span>Asignatura: <strong>Base de Datos II</strong></span>
+          </div>
+          <div class="footer-contact-item">
+            <span>👨‍🏫</span>
+            <span>Docente: <strong>Ing. Bejarano</strong></span>
+          </div>
+          <div class="footer-contact-item">
+            <span>🏫</span>
+            <span>UPLA · <strong>Huancayo, Perú</strong></span>
+          </div>
+
+           <!-- NUEVO: GitHub -->
+    <div class="footer-contact-item">
+      <span>💻</span>
+      <span>
+        GitHub: 
+        <a href="https://github.com/Wikkl20/BDII5CICLO_2026" target="_blank" class="text-blue-400 hover:underline">
+          Ver proyecto
+        </a>
+      </span>
+    </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="footer-bottom">
+      <p class="footer-bottom-text">
+        © 2026 · <span>Kimberly Casimiro Laura</span> · Universidad Peruana Los Andes
+      </p>
+      <div class="footer-dots">
+        <div class="footer-dot-item active"></div>
+        <div class="footer-dot-item active"></div>
+        <div class="footer-dot-item"></div>
+        <div class="footer-dot-item"></div>
+      </div>
     </div>
   </footer>
 
@@ -324,174 +721,56 @@
   <script src="js/auth.js"></script>
   <script src="js/app.js"></script>
   <script>
-    // Inicializar Supabase
     if (window.initSupabase) window.initSupabase();
-    
-    // Keywords rotator
-    const keywords = ['SELECT *', 'INSERT INTO', 'JOIN tables', 'WHERE id=1', 'UPDATE SET', 'DELETE FROM'];
+
+    const keywords = ['SELECT *', 'INSERT INTO', 'JOIN tables', 'WHERE id=1', 'UPDATE SET', 'DELETE FROM', 'CREATE INDEX', 'ALTER TABLE'];
     let keywordIndex = 0;
     setInterval(() => {
       keywordIndex = (keywordIndex + 1) % keywords.length;
       document.getElementById('keyword-rotator').textContent = keywords[keywordIndex];
-    }, 3000);
+    }, 2500);
 
-    // Verificar auth y actualizar UI
-    async function checkAuth() {
-      const supabase = window.SB || window.supabase;
-      if (!supabase) {
-        window.location.href = 'login.html';
-        return;
-      }
-      
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (session) {
-        window.location.href = 'dashboard.html';
-      } else {
-        window.location.href = 'login.html';
-      }
-    }
-
-    // Cargar sesión guardada y actualizar botones
     async function loadSessionState() {
       const supabase = window.SB || window.supabase;
       if (!supabase) return;
-
       const { data: { session } } = await supabase.auth.getSession();
       const navAuth = document.getElementById('nav-auth');
-      const userEmail = session?.user?.email;
-
-      // Obtener datos del usuario - siempre permitir tu email
-      let userRol = null;
-      const tuEmail = 't01267f@ms.upla.edu.pe';
-      const esTuEmail = userEmail?.toLowerCase() === tuEmail;
-      
-      if (session?.user && esTuEmail) {
-        userRol = 'admin';
-      } else if (session?.user) {
-        try {
-          const { data } = await supabase.from('profiles').select('rol').eq('id', session.user.id).single();
-          userRol = data?.rol || 'estudiante';
-        } catch (e) {
-          userRol = 'estudiante';
+      const mobileAuth = document.getElementById('mobile-auth');
+      if (session?.user) {
+        const displayName = session.user.email.split('@')[0];
+        const esAdmin = session.user.email?.toLowerCase() === 't01267f@ms.upla.edu.pe';
+        if (navAuth) {
+          navAuth.innerHTML = `
+            <span class="user-info">${displayName}</span>
+            ${esAdmin ? '<a href="dashboard.html" class="btn btn-outline">Dashboard</a>' : ''}
+            <button onclick="logoutUser()" class="btn btn-primary">Cerrar</button>
+          `;
         }
-      }
-
-      console.log('Email:', userEmail, 'Rol:', userRol, 'EsTuEmail:', esTuEmail);
-
-      if (session?.user && navAuth) {
-        // Sesión activa
-        const displayName = userEmail.split('@')[0];
-        
-        // Verificar si es admin - siempre permitir tu email
-        const puedeAcceder = userRol === 'admin' || esTuEmail;
-        
-        const dashboardBtn = puedeAcceder 
-          ? `<a href="dashboard.html" class="btn btn-outline">Dashboard</a>`
-          : `<a href="unidad.html?u=1" class="btn btn-outline">Unidades</a>`;
-        
-        navAuth.innerHTML = `
-          <span class="user-info">${displayName}</span>
-          ${dashboardBtn}
-          <button onclick="logoutUser()" class="btn btn-primary">Cerrar</button>
-        `;
-        
-        // Mobile auth
-        const mobileAuth = document.getElementById('mobile-auth');
         if (mobileAuth) {
-          const mobileDashBtn = puedeAcceder
-            ? `<a href="dashboard.html" class="btn btn-outline btn-full">Mi Dashboard</a>`
-            : `<a href="unidad.html?u=1" class="btn btn-outline btn-full">Unidades</a>`;
-          
           mobileAuth.innerHTML = `
             <p class="user-display">${displayName}</p>
-            ${mobileDashBtn}
+            ${esAdmin ? '<a href="dashboard.html" class="btn btn-outline btn-full">Dashboard</a>' : ''}
             <button onclick="logoutUser()" class="btn btn-primary btn-full">Cerrar Sesión</button>
           `;
         }
-        
-        // Hero buttons - con sesión
-        const heroButtons = document.getElementById('hero-buttons');
-        if (heroButtons) {
-          heroButtons.innerHTML = `
-            <a href="unidad.html?u=1" class="btn btn-primary">Explorar Unidades</a>
-            <a href="#footer" class="btn btn-outline">Ver más</a>
-          `;
-        }
-      } else if (navAuth) {
-        // Sin sesión
-        navAuth.innerHTML = `
-          <a href="login.html" class="btn btn-outline">Login</a>
-          <a href="register.html" class="btn btn-primary">Registrarse</a>
-        `;
-        
-        const mobileAuth = document.getElementById('mobile-auth');
-        if (mobileAuth) {
-          mobileAuth.innerHTML = `
-            <a href="login.html" class="btn btn-outline btn-full">Login</a>
-            <a href="register.html" class="btn btn-primary btn-full">Registrarse</a>
-          `;
-        }
-        
-        // Hero buttons - sin sesión
-        const heroButtons = document.getElementById('hero-buttons');
-        if (heroButtons) {
-          heroButtons.innerHTML = `
-            <a href="login.html" class="btn btn-primary">Iniciar Sesión</a>
-            <a href="#footer" class="btn btn-outline">Ver más</a>
-          `;
-        }
       }
     }
 
-    // Cerrar sesión
     async function logoutUser() {
       const supabase = window.SB || window.supabase;
-      if (supabase) {
-        await supabase.auth.signOut();
-      }
+      if (supabase) await supabase.auth.signOut();
       window.location.href = 'index.html';
     }
 
-    // Redirigir a unidad específica
-    async function loadUnitPage(unidad) {
-      const supabase = window.SB || window.supabase;
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        closeMobileMenu();
-        window.location.href = 'unidad.html?u=' + unidad;
-      } else {
-        window.location.href = 'login.html';
-      }
-    }
-    
-    // Verificar auth antes de acceder a unidades
-    async function checkAuth() {
-      const supabase = window.SB || window.supabase;
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        window.location.href = 'unidad.html?u=1';
-      } else {
-        window.location.href = 'login.html';
-      }
-    }
-
-    // Menú móvil
     function toggleMobileMenu() {
-      const menu = document.getElementById('mobile-menu');
-      const hamburger = document.getElementById('hamburger');
-      menu.classList.toggle('hidden');
-      hamburger.classList.toggle('active');
+      document.getElementById('mobile-menu').classList.toggle('hidden');
+      document.getElementById('hamburger').classList.toggle('active');
     }
-
     function closeMobileMenu() {
-      const menu = document.getElementById('mobile-menu');
-      const hamburger = document.getElementById('hamburger');
-      menu.classList.add('hidden');
-      hamburger.classList.remove('active');
+      document.getElementById('mobile-menu').classList.add('hidden');
+      document.getElementById('hamburger').classList.remove('active');
     }
 
-    // Custom cursor
     const cursorDot = document.getElementById('cursor-dot');
     const cursorCircle = document.getElementById('cursor-circle');
     document.addEventListener('mousemove', (e) => {
@@ -503,16 +782,11 @@
       }
     });
 
-    // Card tilt effect
     document.querySelectorAll('.card-tilt').forEach(card => {
       card.addEventListener('mousemove', (e) => {
         const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        const rotateX = (y - centerY) / 10;
-        const rotateY = (centerX - x) / 10;
+        const rotateX = (e.clientY - rect.top - rect.height/2) / 10;
+        const rotateY = (rect.width/2 - (e.clientX - rect.left)) / 10;
         card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
       });
       card.addEventListener('mouseleave', () => {
@@ -520,7 +794,6 @@
       });
     });
 
-    // Inicializar estado de sesión al cargar
     loadSessionState();
   </script>
 </body>
