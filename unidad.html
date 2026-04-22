@@ -174,6 +174,22 @@
         return;
       }
 
+      // Verificar si el usuario logueado es admin
+      let esAdmin = false;
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          const tuEmail = 't01267f@ms.upla.edu.pe';
+          if (session.user.email?.toLowerCase() === tuEmail) {
+            esAdmin = true;
+          } else {
+            const { data: prof } = await supabase
+              .from('profiles').select('rol').eq('id', session.user.id).single();
+            esAdmin = prof?.rol === 'admin';
+          }
+        }
+      } catch(e) {}
+
       const { data, error } = await supabase
         .from('trabajos')
         .select('*')
@@ -181,7 +197,7 @@
         .order('created_at', { ascending: false });
 
       if (error || !data?.length) {
-        modalBody.innerHTML = '<p class="empty-msg">No hay trabajos subidos</p>';
+        modalBody.innerHTML = '<p class="empty-msg">No hay trabajos subidos para esta semana</p>';
         return;
       }
 
@@ -196,12 +212,29 @@
             ${job.archivo_nombre ? `<span>${job.archivo_nombre}</span>` : ''}
           </div>
           <div class="job-card-actions">
-            <a href="${job.archivo_url || job.enlace_url || '#'}" target="_blank" class="btn btn-primary btn-sm">
-              Ver Archivo ↗
-            </a>
+            <a href="${job.archivo_url || job.enlace_url || '#'}"
+               target="_blank" class="btn btn-primary btn-sm">Ver ↗</a>
+            ${esAdmin ? `
+              <button onclick="abrirEdicionDesdeModal('${job.id}','${escStr(job.titulo)}',${job.unidad},${job.semana},'${escStr(job.archivo_url||'')}','${escStr(job.enlace_url||'')}','${job.tipo||'archivo'}')"
+                      class="btn btn-outline btn-sm">✎ Editar</button>
+            ` : ''}
           </div>
         </div>
       `).join('');
+    }
+
+    // Escapa comillas simples para atributos onclick
+    function escStr(str) {
+      return (str || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    }
+
+    // Edición desde unidad.html: redirige al dashboard con parámetro
+    function abrirEdicionDesdeModal(id, titulo, unidad, semana, archivoUrl, enlaceUrl, tipo) {
+      // Guardar datos en sessionStorage para que dashboard los lea
+      sessionStorage.setItem('editJob', JSON.stringify({
+        id, titulo, unidad, semana, archivoUrl, enlaceUrl, tipo
+      }));
+      window.location.href = 'dashboard.html?editar=1';
     }
 
     function closeModal(event) {
@@ -238,17 +271,28 @@
       
       if (session?.user) {
         const displayName = session.user.email.split('@')[0];
+        const tuEmail = 't01267f@ms.upla.edu.pe';
+        let esAdmin = session.user.email?.toLowerCase() === tuEmail;
         
+        // Verificar rol en profiles si no es el email admin principal
+        if (!esAdmin) {
+          try {
+            const { data: prof } = await supabase
+              .from('profiles').select('rol').eq('id', session.user.id).single();
+            esAdmin = prof?.rol === 'admin';
+          } catch(e) {}
+        }
+
         navAuth.innerHTML = `
           <span class="user-info">${displayName}</span>
-          <a href="index.html" class="btn btn-outline">Inicio</a>
+          ${esAdmin ? '<a href="dashboard.html" class="btn btn-outline">Dashboard</a>' : ''}
           <button onclick="logoutUser()" class="btn btn-primary">Cerrar</button>
         `;
         
         if (mobileAuth) {
           mobileAuth.innerHTML = `
             <p class="user-display">${displayName}</p>
-            <a href="index.html" class="btn btn-outline btn-full">Inicio</a>
+            ${esAdmin ? '<a href="dashboard.html" class="btn btn-outline btn-full">Dashboard</a>' : ''}
             <button onclick="logoutUser()" class="btn btn-primary btn-full">Cerrar Sesión</button>
           `;
         }
