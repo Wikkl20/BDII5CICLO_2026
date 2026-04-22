@@ -28,6 +28,9 @@
         <div class="form-header">
           <h1 class="form-title">Crear Cuenta</h1>
           <p class="form-subtitle">Regístrate para acceder al portafolio</p>
+          <div style="margin-top:.75rem;padding:.6rem .9rem;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:.5rem;font-size:.75rem;color:rgba(255,255,255,0.5);line-height:1.5;">
+            Luego de registrarte, el <strong style="color:rgba(212,175,55,0.8)">administrador</strong> aprobará tu acceso.
+          </div>
         </div>
 
         <form id="register-form">
@@ -146,11 +149,13 @@
 
         if (error) throw error;
 
-        successDiv.textContent = '¡Registro exitoso! Revisa tu email para verificar tu cuenta.';
+        successDiv.innerHTML = ' <strong>¡Registro exitoso!</strong><br>Tu solicitud fue enviada. El administrador revisará tu cuenta y te dará acceso. Puedes iniciar sesión una vez aprobado.';
         successDiv.classList.remove('hidden');
+        document.getElementById('register-form').reset();
         
+        // Si Supabase confirmación automática está activa, redirigir
         if (data?.session) {
-          window.location.href = 'dashboard.html';
+          setTimeout(() => { window.location.href = 'unidad.html?u=1'; }, 2000);
         }
       } catch (err) {
         errorDiv.textContent = err.message || 'Error al registrarse';
