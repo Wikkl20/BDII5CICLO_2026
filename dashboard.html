@@ -37,6 +37,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
           </svg>
         </button>
+        <a href="unidad.html?u=1" class="btn btn-ghost" title="Ver portafolio como usuario">↗ Portafolio</a>
         <button class="btn btn-outline" onclick="logout()">Cerrar Sesión</button>
       </div>
     </div>
@@ -49,6 +50,7 @@
       <button class="tab active" onclick="switchTab('mis-trabajos')">Mis Trabajos</button>
       <button class="tab" onclick="switchTab('subir')">Subir Trabajo</button>
       <button class="tab" onclick="switchTab('ver-todos')">Ver Portafolio</button>
+      <button class="tab" onclick="switchTab('usuarios')">Usuarios</button>
     </div>
 
     <!-- Tab: Mis Trabajos -->
@@ -137,8 +139,24 @@
 
     <!-- Tab: Ver Portafolio -->
     <div id="tab-ver-todos" class="dashboard-card hidden">
-      <h2 class="dashboard-card-title">Todos los Trabajos</h2>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem;">
+        <h2 class="dashboard-card-title" style="margin:0">Ver Portafolio</h2>
+        <input type="search" id="portafolio-search" class="form-input"
+               placeholder="🔍 Buscar trabajo..." oninput="filtrarPortafolio(this.value)"
+               style="max-width:260px;padding:.45rem .75rem;font-size:.85rem">
+      </div>
       <div class="units-display" id="all-jobs-list">
+        <div class="text-center text-muted">Cargando...</div>
+      </div>
+    </div>
+
+    <!-- Tab: Usuarios -->
+    <div id="tab-usuarios" class="dashboard-card hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+        <h2 class="dashboard-card-title" style="margin:0">Gestión de Usuarios</h2>
+        <button onclick="loadUserManagement()" class="btn btn-outline btn-sm">↻ Actualizar</button>
+      </div>
+      <div class="jobs-list" id="users-list">
         <div class="text-center text-muted">Cargando...</div>
       </div>
     </div>
@@ -224,14 +242,29 @@
       // Load jobs
       loadMyJobs();
       loadAllJobs();
+      updateJobCounts();
 
       // Verificar si hay una unidad seleccionada desde index
       const selectedUnidad = sessionStorage.getItem('selectedUnidad');
       if (selectedUnidad) {
         sessionStorage.removeItem('selectedUnidad');
-        // Ir directamente a la pestaña de ver todos y mostrar esa unidad
         switchTab('ver-todos');
-        // Aquí podrías cargar solo esa unidad si lo necesitas
+      }
+
+      // Si venimos de unidad.html con un trabajo a editar, abrir modal automáticamente
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('editar') === '1') {
+        const editDataRaw = sessionStorage.getItem('editJob');
+        if (editDataRaw) {
+          sessionStorage.removeItem('editJob');
+          try {
+            const d = JSON.parse(editDataRaw);
+            setTimeout(() => {
+              openEditModal(d.id, d.titulo, d.unidad, d.semana,
+                            d.archivoUrl, d.enlaceUrl, d.tipo);
+            }, 400);
+          } catch(e) {}
+        }
       }
 
       // Week options
@@ -382,9 +415,13 @@
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('[id^="tab-"]').forEach(t => t.classList.add('hidden'));
       
-      const tabs = ['mis-trabajos', 'subir', 'ver-todos'];
-      document.querySelectorAll('.tab')[tabs.indexOf(tabId)].classList.add('active');
+      const tabs = ['mis-trabajos', 'subir', 'ver-todos', 'usuarios'];
+      const idx = tabs.indexOf(tabId);
+      if (idx >= 0) document.querySelectorAll('.tab')[idx].classList.add('active');
       document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+      // Carga lazy de usuarios
+      if (tabId === 'usuarios') loadUserManagement();
     }
 
     function toggleTheme() {
