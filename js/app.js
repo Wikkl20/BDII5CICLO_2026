@@ -438,6 +438,64 @@ function toggleTheme() {
     document.documentElement.classList.contains('dark') ? 'dark' : 'light');
 }
 
+// ============================================
+// GLOBAL INTERACTIVE BACKGROUND
+// Animates softly with mouse + scroll
+// ============================================
+function initInteractiveBackground() {
+  if (document.querySelector('.interactive-bg')) return;
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'interactive-bg';
+  wrapper.innerHTML = `
+    <div class="interactive-bg-layer layer-gold"></div>
+    <div class="interactive-bg-layer layer-cyan"></div>
+    <div class="interactive-bg-layer layer-violet"></div>
+  `;
+
+  document.body.appendChild(wrapper);
+
+  const [gold, cyan, violet] = wrapper.querySelectorAll('.interactive-bg-layer');
+  let targetX = window.innerWidth / 2;
+  let targetY = window.innerHeight / 2;
+  let smoothX = targetX;
+  let smoothY = targetY;
+
+  const updateTargets = () => {
+    const cx = window.innerWidth / 2;
+    const cy = window.innerHeight / 2;
+    const dx = (smoothX - cx) / cx;
+    const dy = (smoothY - cy) / cy;
+    const sy = window.scrollY || window.pageYOffset || 0;
+
+    gold.style.transform = `translate(${dx * 26}px, ${dy * 18 + sy * 0.03}px)`;
+    cyan.style.transform = `translate(${dx * -20}px, ${dy * -24 - sy * 0.025}px)`;
+    violet.style.transform = `translate(calc(-50% + ${dx * 12}px), calc(-50% + ${dy * 14 + sy * 0.015}px))`;
+  };
+
+  const tick = () => {
+    smoothX += (targetX - smoothX) * 0.09;
+    smoothY += (targetY - smoothY) * 0.09;
+    updateTargets();
+    requestAnimationFrame(tick);
+  };
+
+  document.addEventListener('mousemove', (e) => {
+    targetX = e.clientX;
+    targetY = e.clientY;
+  }, { passive: true });
+
+  window.addEventListener('scroll', updateTargets, { passive: true });
+  window.addEventListener('resize', updateTargets, { passive: true });
+  requestAnimationFrame(tick);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initInteractiveBackground);
+} else {
+  initInteractiveBackground();
+}
+
 
 // ============================================
 // BUSCADOR EN "VER PORTAFOLIO"
