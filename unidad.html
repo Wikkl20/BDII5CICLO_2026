@@ -62,6 +62,7 @@
       <div class="unit-badge" id="unit-badge">UNIDAD 1</div>
       <h1 class="unit-title" id="unit-title">Semanas 1 - 4</h1>
       <p class="unit-subtitle" id="unit-subtitle">Trabajos del curso</p>
+      <p class="unit-intro" id="unit-intro"></p>
     </section>
 
     <!-- Semanas Grid -->
@@ -109,12 +110,59 @@
       4: [13,14,15,16]
     };
 
+    const unitInfo = {
+      1: {
+        name: 'Arquitectura de Base de Datos',
+        subtitle: 'Semanas 1 - 4',
+        intro: 'Explora cómo se estructura una base de datos desde su concepción hasta su clasificación, entendiendo decisiones de arquitectura que impactan rendimiento, seguridad y escalabilidad.'
+      },
+      2: {
+        name: 'Unidad 2',
+        subtitle: 'Trabajos del curso',
+        intro: ''
+      },
+      3: {
+        name: 'Unidad 3',
+        subtitle: 'Trabajos del curso',
+        intro: ''
+      },
+      4: {
+        name: 'Unidad 4',
+        subtitle: 'Trabajos del curso',
+        intro: ''
+      }
+    };
+
+    const weekNames = {
+      1: {
+        1: 'Introducción a la base de datos',
+        2: 'Gestores de base de datos',
+        3: 'Diseño de arquitectura de base de datos',
+        4: 'Tipos de arquitecturas de base de datos'
+      }
+    };
+
+    const weekIntros = {
+      1: {
+        1: 'Iniciamos con conceptos esenciales para comprender qué es una base de datos y por qué su arquitectura importa desde el inicio.',
+        2: 'Conocerás el rol de los gestores de base de datos y cómo administran la información para garantizar acceso, integridad y eficiencia.',
+        3: 'Analizaremos cómo se diseña una arquitectura de base de datos: componentes, niveles y decisiones clave para lograr un sistema sólido.',
+        4: 'Finalmente, compararemos tipos de arquitecturas para identificar cuál se ajusta mejor a distintos requerimientos y escenarios.'
+      }
+    };
+
     function setupUnidad() {
       const semanas = unitSemanas[currentUnidad];
+      const info = unitInfo[currentUnidad] || unitInfo[1];
       document.getElementById('unit-badge').textContent = `UNIDAD ${currentUnidad}`;
-      document.getElementById('unit-title').textContent = `Semanas ${semanas[0]} - ${semanas[3]}`;
-      document.getElementById('unit-subtitle').textContent = 'Trabajos del curso';
-      
+      document.getElementById('unit-title').textContent = info.name;
+      document.getElementById('unit-subtitle').textContent = info.subtitle;
+      const unitIntro = document.getElementById('unit-intro');
+      if (unitIntro) {
+        unitIntro.textContent = info.intro || '';
+        unitIntro.style.display = info.intro ? 'block' : 'none';
+      }
+
       [1,2,3,4].forEach(u => {
         const btn = document.getElementById(`unit-u${u}`);
         if (btn) btn.classList.toggle('active', u === currentUnidad);
@@ -126,6 +174,8 @@
       const container = document.getElementById(`week-${semana}`);
       
       if (!supabase || !container) return;
+
+      const weekIntro = weekIntros[currentUnidad]?.[semana] || '';
 
       const { data, error } = await supabase
         .from('trabajos')
@@ -141,11 +191,15 @@
       const count = data?.length || 0;
       
       if (count === 0) {
-        container.innerHTML = '<p class="empty-msg">Sin trabajos</p>';
+        container.innerHTML = `
+          ${weekIntro ? `<p class="week-intro">${weekIntro}</p>` : ''}
+          <p class="empty-msg">Sin trabajos</p>
+        `;
         return;
       }
 
       container.innerHTML = `
+        ${weekIntro ? `<p class="week-intro">${weekIntro}</p>` : ''}
         <div class="week-summary">
           <span class="week-count">${count} trabajo${count !== 1 ? 's' : ''}</span>
           <button class="btn btn-sm btn-outline" onclick="openWeekModal(${semana})">Ver todos ↗</button>
@@ -165,7 +219,8 @@
       const modalTitle = document.getElementById('modal-title');
       const modalBody = document.getElementById('modal-body');
       
-      modalTitle.textContent = `Semana ${semana}`;
+      const weekLabel = weekNames[currentUnidad]?.[semana];
+      modalTitle.textContent = weekLabel ? `Semana ${semana}: ${weekLabel}` : `Semana ${semana}`;
       modalBody.innerHTML = '<p class="loading-msg">Cargando...</p>';
       modal.classList.remove('hidden');
       
@@ -250,8 +305,10 @@
         <div class="week-card" onclick="openWeekModal(${semana})">
           <div class="week-header">
             <span class="week-num">Semana ${semana}</span>
+            ${weekNames[currentUnidad]?.[semana] ? `<span class="week-label">${weekNames[currentUnidad][semana]}</span>` : ''}
           </div>
           <div class="week-content" id="week-${semana}">
+            ${weekIntros[currentUnidad]?.[semana] ? `<p class="week-intro">${weekIntros[currentUnidad][semana]}</p>` : ''}
             <p class="loading-msg">Cargando...</p>
           </div>
         </div>
@@ -339,3 +396,4 @@
   </script>
 </body>
 </html>
+
